@@ -39,5 +39,34 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         sceneView.session.pause()
     }
 
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if let touchLocation = touches.first?.location(in: sceneView) {
+            let hitTestResult = sceneView.raycastQuery(from: touchLocation, allowing: .estimatedPlane, alignment: .any)
+            
+            if let hitResult = hitTestResult {
+                addDot(at: hitResult)
+            }
+            
+        }
+    }
+    
+    func addDot(at hitResult: ARRaycastQuery) {
+        
+        let dotGeometry = SCNSphere(radius: 0.05)
+        
+        let material = SCNMaterial()
+        material.diffuse.contents = UIColor.red
+        
+        dotGeometry.materials = [material]
+        
+        let dotNode = SCNNode(geometry: dotGeometry)
+        
+        dotNode.position = SCNVector3(hitResult.direction.x, hitResult.direction.y, hitResult.direction.z)
+        
+        sceneView.scene.rootNode.addChildNode(dotNode)
+        
+    }
+    
 
 }
